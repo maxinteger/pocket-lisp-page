@@ -14,8 +14,6 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.46.0/codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.46.0/mode/clojure/clojure.js"></script>
-    <script src="https://unpkg.com/pocket-lisp/dist/index.es.js" type="module"></script>
-    <script src="https://unpkg.com/pocket-lisp/dist/stdlib.es.js" type="module"></script>
     <style>
       .CodeMirror {
         border: 1px solid #dee2e6;
@@ -80,8 +78,8 @@
       </form>
     </div>
     <script type="module">
-      import { PocketLisp } from 'https://unpkg.com/pocket-lisp/dist/index.es.js'
-      import { literals, runtime, utils } from 'https://unpkg.com/pocket-lisp/dist/stdlib.es.js'
+      import { PocketLisp } from 'https://unpkg.com/pocket-lisp/dist/index.mjs'
+      import { literals, runtime, utils } from 'https://unpkg.com/pocket-lisp-stdlib/dist/index.mjs'
 
       const textArea = document.getElementById('code')
       const runBtn = document.getElementById('run')
