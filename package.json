@@ -1,0 +1,72 @@
+{
+  "name": "pocket-lisp-page",
+  "version": "1.0.0",
+  "author": {
+    "name": "Laszlo Vadasz"
+  },
+  "license": "MIT",
+  "private": true,
+  "description": "Simple, lisp/closure like interpreter for sandbox scripting in browser webpage and sandbox",
+  "keywords": [
+    "interpreter",
+    "lisp"
+  ],
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^13.13.4",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
+    "@wessberg/rollup-plugin-ts": "^1.2.24",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "husky": "^4.2.5",
+    "npm-dts": "^1.2.1",
+    "prettier": "2.0.5",
+    "rollup": "2.7.6",
+    "source-map-support": "0.5.19",
+    "ts-node": "8.9.1",
+    "tsconfig-paths": "3.9.0",
+    "typescript": "^3.8.3",
+    "pocket-lisp": "latest",
+    "pocket-lisp-stdlib": "latest"
+  },
+  "scripts": {
+    "lint": "eslint \"src/**/*.ts\" --fix --max-warnings=0",
+    "repl": "ts-node -r tsconfig-paths/register src/repl.ts",
+    "start": "npm run repl"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "printWidth": 100
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "**/*.js",
+      "**/*.js.map",
+      "**/*.spec.ts",
+      "test/**/*"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  }
+}
