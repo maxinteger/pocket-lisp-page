@@ -12,7 +12,7 @@ Pocket Lisp a simple and configurable generic script language.
 
 ## Try it!
 
-In your browser as a **Sandbox**: [Pocket-lisp sandbox](https://maxinteger.github.io/pocket-lisp/sandbox.html)
+In your browser as a **Sandbox**: [Pocket-lisp sandbox](https://maxinteger.github.io/pocket-lisp-page/sandbox.html)
 
 In your terminal as a **REPL**, with the `npm start` command
 
