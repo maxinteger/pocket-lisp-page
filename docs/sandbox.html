@@ -1,131 +1,217 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Pocket lisp Sandbox</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.46.0/codemirror.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.46.0/codemirror.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.46.0/mode/clojure/clojure.js"></script>
-    <style>
+<html lang='en'>
+<head>
+  <title>Pocket lisp Sandbox</title>
+  <link
+    rel='stylesheet'
+    href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
+    integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T'
+    crossorigin='anonymous'
+  />
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css'
+        integrity='sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw=='
+        crossorigin='anonymous' />
+  <link rel='stylesheet' href='https://maxinteger.github.io/pocket-lisp-page/assets/css/style.css'>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js'
+          integrity='sha512-UxcTlYsLkcuGZL9JNnMsfo3p7VFSmcgBjH1VUSM82Okk5ni52bk7vz9f2p+D1VnMcNUmMzbzgWqWcdJ2j8Svow=='
+          crossorigin='anonymous'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/mode/clojure/clojure.min.js'
+          integrity='sha512-X768TsV+mWnXbVgGHnnjow8nzN12Sn54VaZDkqIW9HgkDOW8nlGribrJrk+a4D+mQu73O7gsqlrRqHbJ5N8adQ=='
+          crossorigin='anonymous'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/edit/matchbrackets.min.js'
+          integrity='sha512-zgTUY40c9HFb3Kr25lTW3gpnSt+xVc0yWPYwa6Yu7kChiaOHfNlyA4bM8Y3YLzjeQfrNFy40UcbOE/Cmmb29nQ=='
+          crossorigin='anonymous'></script>
+  <style>
+      .wrapper {
+          width: 100%;
+      }
+
+      .container {
+          margin-top: 190px;
+      }
+
       .CodeMirror {
-        border: 1px solid #dee2e6;
-        border-left: none;
-        border-radius: 0.2rem;
+          border: 1px solid #dee2e6;
+          border-left: none;
+          border-radius: 0.2rem;
+          margin-bottom: 20px;
       }
-      .output {
-        min-height: 300px;
-        font-family: monospace;
-        line-height: 1.2;
-        position: relative;
+
+      pre.output {
+          min-height: 300px;
+          font-family: monospace;
+          line-height: 1.2;
+          position: relative;
+          background: #eee;
+          padding: 0;
       }
+
       .output > div {
-        border-top: 1px solid #eee;
-        padding: 0.2em 0.5em 0.2rem 2rem;
+          border-top: 1px solid #eee;
+          padding: 0.2em 0.5em 0.2rem 2rem;
       }
+
       .output > div:before {
-        position: absolute;
-        left: 0.5rem;
+          position: absolute;
+          left: 0.5rem;
       }
 
-      .output .normal:before {
-        content: '>';
-        color: #aaa;
-      }
-      .output .error {
-        color: darkred;
-        background: rgba(255, 0, 0, 0.1);
-      }
-      .output .error:before {
-        display: block;
-        content: '!';
-        color: white;
-        background: red;
-        border-radius: 50%;
-        width: 0.7rem;
-        height: 0.7rem;
-        font-weight: bold;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1 class="my-3">Pocket lisp Sandbox</h1>
-      <form>
-        <div class="row">
-          <div class="col-md-6 my-3">
-            <div>
-              <button id="run" type="button" class="btn btn-primary mb-2">Run</button>
-              <small class="text-muted">Ctrl + Enter</small>
-            </div>
-            <textarea name="code" id="code" cols="30" rows="10" class="border">
-(print (+ 1 2))</textarea
-            >
-          </div>
-          <div class="col-md-6 my-3">
-            <button id="clear" type="button" class="btn btn-light mb-2">Clear</button>
-            <pre id="output" class="output border rounded-sm"></pre>
-          </div>
-        </div>
-      </form>
-    </div>
-    <script type="module">
-      import { PocketLisp } from 'https://unpkg.com/pocket-lisp/dist/index.mjs'
-      import { literals, runtime, utils } from 'https://unpkg.com/pocket-lisp-stdlib/dist/index.mjs'
-
-      const textArea = document.getElementById('code')
-      const runBtn = document.getElementById('run')
-      const clearBtn = document.getElementById('clear')
-      const output = document.getElementById('output')
-
-      const cm = CodeMirror.fromTextArea(textArea, {
-        autoCloseBrackets: true,
-        lineNumbers: true,
-        matchBrackets: true,
-        mode: 'text/x-clojure'
-      })
-
-      const writeOutput = (value, isError) => {
-        const div = document.createElement('div')
-        div.classList.add(isError ? 'error' : 'normal')
-        div.append(value)
-        output.append(div)
+      .code-error {
+          color: darkred;
+          background: rgba(255, 0, 0, 0.1);
       }
 
-      const pocketLisp = new PocketLisp(
-        {
-          globals: runtime,
-          stdout: value => writeOutput(value, false),
-          utils
+      .code-log {
+          color: #222;
+          background: #f7f7f7;
+      }
+
+      .code-icon {
+          display: inline-block;
+          margin: 0 5px;
+          border-radius: 50%;
+          width: 0.8rem;
+          height: 0.8rem;
+          font-weight: bold;
+          text-align: center;
+          line-height: 0.9rem;
+          color: white;
+      }
+      .code-error-icon {
+          background: red;
+      }
+      .code-log-icon {
+          background: transparent;
+          color: blue;
+      }
+
+      .syntax-error {
+          border-bottom: 3px solid red;
+      }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Pocket lisp</h1>
+  <p>Sandbox</p>
+</header>
+<div id='banner'>
+  <span id='logo'></span>
+
+  <a href='https://github.com/maxinteger/pocket-lisp-page' class='button fork'><strong>View On GitHub</strong></a>
+
+</div>
+<div class='wrapper'>
+  <div class='container'>
+    <form>
+      <textarea name='code' id='code' cols='30' rows='10' class='border'></textarea>
+      <div>
+        <button id='run' type='button' class='btn btn-primary mb-2'>Run</button>
+        <small class='text-muted'>Ctrl + Enter</small>
+      </div>
+    </form>
+  </div>
+</div>
+<script type='module'>
+  const STORAGE_KEY = 'pl-script'
+
+  async function importDependencies() {
+    if (/(localhost|\d+\.\d+\.\d+\.\d)/.test(location.hostname)) {
+      return {
+        ...await import((`${location.origin}/node_modules/pocket-lisp/dist/index.mjs`)),
+        ...await import((`${location.origin}/node_modules/pocket-lisp-stdlib/dist/index.mjs`))
+      }
+    } else {
+      return {
+        ...await import('https://unpkg.com/pocket-lisp/dist/index.mjs'),
+        ...await import('https://unpkg.com/pocket-lisp-stdlib/dist/index.mjs')
+      }
+    }
+  }
+
+  async function init() {
+    const { PocketLisp, literals, runtime, utils } = await importDependencies()
+
+    const textArea = document.getElementById('code')
+    const runBtn = document.getElementById('run')
+    const output = document.getElementById('output')
+
+    const cm = CodeMirror.fromTextArea(textArea, {
+      autoCloseBrackets: true,
+      lineNumbers: true,
+      matchBrackets: true,
+      mode: 'text/x-clojure'
+    })
+    const editorWidgets = []
+    const editorErrors = []
+
+    const previousScript = localStorage.getItem(STORAGE_KEY)
+    cm.doc.setValue(previousScript || '(print (+ 1 2))')
+
+    const pocketLisp = new PocketLisp(
+      {
+        globals: runtime,
+        stdout: (value, pos) => {
+          editorWidgets.push(cm.doc.addLineWidget((pos?.line ?? 1) - 1, createErrorWidget('log', value), {
+            coverGutter: false,
+          }))
         },
-        literals
-      )
+        utils
+      },
+      literals
+    )
 
-      const run = async () => {
-        const src = cm.doc.getValue()
-        try {
-          await pocketLisp.execute(src)
-        } catch (e) {
-          for (let err of e.errors) {
-            const msg = e.type === 'Parser' ? `line: ${err.line} - ${err.message}` : err.message
-            writeOutput(msg, true)
+    const run = async () => {
+      editorWidgets.forEach(widget => widget.clear())
+      editorWidgets.length = 0
+      editorErrors.forEach(mark => mark.clear())
+      editorErrors.length = 0
+
+      const src = cm.doc.getValue()
+      localStorage.setItem(STORAGE_KEY, src)
+      try {
+        await pocketLisp.execute(src)
+      } catch (e) {
+        for (let err of e.errors) {
+          if (err.position) {
+            const mFrom = cm.doc.posFromIndex(err.position.startIndex)
+            const mTo = cm.doc.posFromIndex(err.position.endIndex)
+            editorErrors.push(cm.doc.markText(mFrom, mTo, { className: 'syntax-error', title: err.message }))
+
+            editorWidgets.push(cm.doc.addLineWidget(err.position.line - 1, createErrorWidget('error', err.message), {
+              coverGutter: false,
+            }))
           }
         }
       }
+    }
 
-      runBtn.addEventListener('click', run)
-      window.addEventListener('keydown', e => {
-        if (e.ctrlKey && e.code === 'Enter') run()
-      })
-      clearBtn.addEventListener('click', () => (output.innerHTML = ''))
-    </script>
-  </body>
+    runBtn.addEventListener('click', run)
+    window.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.code === 'Enter') run()
+    })
+  }
+
+  function createErrorWidget(type, message) {
+    const node = document.createElement('div')
+    const icon = node.appendChild(document.createElement('span'))
+    node.appendChild(document.createTextNode(message))
+
+    if (type === 'error') {
+      icon.innerHTML = '!'
+      icon.className = 'code-icon code-error-icon'
+      node.className = 'code-error'
+    } else if (type === 'log') {
+      icon.innerHTML = '▸'
+      icon.className = 'code-icon code-log-icon'
+      node.className = 'code-log'
+    }
+    return node
+  }
+
+  init()
+
+</script>
+</body>
 </html>

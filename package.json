@@ -25,48 +25,22 @@
     "@wessberg/rollup-plugin-ts": "^1.2.24",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
+    "http-server": "^0.12.3",
     "husky": "^4.2.5",
     "npm-dts": "^1.2.1",
+    "pocket-lisp": "^0.7.0",
+    "pocket-lisp-stdlib": "^0.7.0",
     "prettier": "2.0.5",
     "rollup": "2.7.6",
     "source-map-support": "0.5.19",
-    "ts-node": "8.9.1",
+    "ts-node": "9.0.0",
     "tsconfig-paths": "3.9.0",
-    "typescript": "^3.8.3",
-    "pocket-lisp": "latest",
-    "pocket-lisp-stdlib": "latest"
+    "typescript": "^4.0.5"
   },
   "scripts": {
     "lint": "eslint \"src/**/*.ts\" --fix --max-warnings=0",
     "repl": "ts-node -r tsconfig-paths/register src/repl.ts",
-    "start": "npm run repl"
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "none",
-    "printWidth": 100
-  },
-  "nyc": {
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "exclude": [
-      "**/*.d.ts",
-      "**/*.js",
-      "**/*.js.map",
-      "**/*.spec.ts",
-      "test/**/*"
-    ],
-    "reporter": [
-      "html"
-    ],
-    "all": true
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
+    "start": "npm run repl",
+    "sandbox": "http-server -o docs/sandbox.html"
   }
 }

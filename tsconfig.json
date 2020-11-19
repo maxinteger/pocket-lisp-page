@@ -2,13 +2,12 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./bin",
-
-    "target": "es6",
-    "lib": ["es6"],
+    "baseUrl": "./src",
+    "target": "es5",
+    "lib": ["es5"],
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
-
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
