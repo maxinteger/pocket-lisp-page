@@ -134,8 +134,8 @@ _Note:_ Hashmap must have even number of paramaters
 Print value to the standard output. It accepts any amount of parameters.
 
 ```clojure
-(print "Hello world")
-(print 42 1/2 1.5)
+(print "Hello world")               ; print: "Hello world"
+(print 42)                          ; print: 42
 ```
 
 ### Const - `const`
@@ -143,10 +143,10 @@ Print value to the standard output. It accepts any amount of parameters.
 Wrap a constant value into a function
 
 ```clojure
-(print (map (const 1) [1 2 3]))     ; [1 1 1]
+(print (map (const 1) [1 2 3]))     ; print: [1 1 1]
 
 (def _42 (const 42))
-(print (_42))                       ; 42
+(print (_42))                       ; print: 42
 ```
 
 ### define variable - `def`
@@ -161,7 +161,7 @@ Define the `x` variable
 
 ```clojure
 (def x 42)
-(print x)                           ; print 42
+(print x)                           ; print: 42
 ```
 
 ### Lambda function - `fn`
@@ -178,7 +178,7 @@ Define the `x` variable
                                     ; function closure
 (def add (fn [a] ( fn [b] (+ a b) )))
 (def addTo10 (add 10))              ; create reference for the function
-(print (addTo10 1))                 ; print 11
+(print (addTo10 1))                 ; print: 11
 ```
 
 #### Function shortcut - `#()`
@@ -186,7 +186,7 @@ Define the `x` variable
 ```clojure
 (def add #(+ %1 %2))
 (def addTo10 (add 10))
-(print (addTo10 1))                 ; print 11
+(print (addTo10 1))                 ; print: 11
 ```
 
 ### Define function - `defn`
@@ -198,7 +198,8 @@ The fallowing two definitions are equivalent:
 ```clojure
 (def add (fn [a b] (+ a b)))
 
-(defn add [a b] (+ a b)
+(defn add [a b] (+ a b))
+(print (add 40 2))                  ; print: 42
 ```
 
 ### If function - `if`
@@ -210,7 +211,7 @@ The fallowing two definitions are equivalent:
 - false branch
 
 ```clojure
-(print (if true 1 2))               ; print 1
+(print (if true 1 2))               ; print: 1
 ```
 
 ### Case function - `case`
@@ -223,11 +224,11 @@ Each breach is a list of two items:
 
 ```clojure
 (case 42
-  ((<= 10)                       (print "Ok"))
-  ((#(and (>= %1 11) (< 50 %1))) (print "Warning"))
+  ((>= 10)                       (print "Ok"))
+  ((#(and (<= 11 %1) (> 50 %1))) (print "Warning"))
   (:else                         (print "Error"))
 )
-                                   ; print "Warning"
+                                   ; print: "Warning"
 ```
 
 *Note*:
@@ -239,21 +240,21 @@ Each breach is a list of two items:
 `do` run sequentially all the passed parameters and return with the values of the last expression. It must be called with at least 1 parameter.
 
 ```clojure
-(print (do 1 2 42))                 ; print 42
+(print (do 1 2 42))                 ; print: 42
 (defn x [] (do (+ 1 2) 10))
 ```
 
-### Eff function - `eff`
+### Side effect function - `side-effect`
 
 Wrap a non-pure function into another function
 
 ```clojure
-(print (map (eff random) [1 2 3]))  ; print [0.321, 0.987, 0.451]
+(print (map (side-effect random) [1 2 3]))  ; print: [0.321, 0.987, 0.451]
 ```
 
 It also accepts additional parameters which are passed to the function
 
 ```clojure
-(def effect (eff print "hello"))
-(effect)                            ; print "hello 
+(def effect (side-effect print "hello"))
+(effect)                            ; print: "hello 
 ```
