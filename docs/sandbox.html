@@ -12,6 +12,9 @@
         integrity='sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw=='
         crossorigin='anonymous' />
   <link rel='stylesheet' href='https://maxinteger.github.io/pocket-lisp-page/assets/css/style.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/hint/show-hint.min.css'
+        integrity='sha512-OmcLQEy8iGiD7PSm85s06dnR7G7C9C0VqahIPAj/KHk5RpOCmnC6R2ob1oK4/uwYhWa9BF1GC6tzxsC8TIx7Jg=='
+        crossorigin='anonymous' />
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js'
           integrity='sha512-UxcTlYsLkcuGZL9JNnMsfo3p7VFSmcgBjH1VUSM82Okk5ni52bk7vz9f2p+D1VnMcNUmMzbzgWqWcdJ2j8Svow=='
@@ -21,6 +24,9 @@
           crossorigin='anonymous'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/edit/matchbrackets.min.js'
           integrity='sha512-zgTUY40c9HFb3Kr25lTW3gpnSt+xVc0yWPYwa6Yu7kChiaOHfNlyA4bM8Y3YLzjeQfrNFy40UcbOE/Cmmb29nQ=='
+          crossorigin='anonymous'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.3/addon/hint/show-hint.min.js'
+          integrity='sha512-MrjvXNSNqYulSeUMQF2ICjBdjKqA4Tg02SkTIojfu+xFfIn7uPJX+qKdonZw5JJTOXZfoI+Na/rsNmlSP/Jmfg=='
           crossorigin='anonymous'></script>
   <style>
       .wrapper {
@@ -78,9 +84,11 @@
           line-height: 0.9rem;
           color: white;
       }
+
       .code-error-icon {
           background: red;
       }
+
       .code-log-icon {
           background: transparent;
           color: blue;
@@ -135,13 +143,13 @@
 
     const textArea = document.getElementById('code')
     const runBtn = document.getElementById('run')
-    const output = document.getElementById('output')
 
     const cm = CodeMirror.fromTextArea(textArea, {
       autoCloseBrackets: true,
       lineNumbers: true,
       matchBrackets: true,
-      mode: 'text/x-clojure'
+      mode: 'text/x-clojure',
+      extraKeys: { 'Ctrl-Space': 'autocomplete' },
     })
     const editorWidgets = []
     const editorErrors = []
@@ -154,13 +162,14 @@
         globals: runtime,
         stdout: (value, pos) => {
           editorWidgets.push(cm.doc.addLineWidget((pos?.line ?? 1) - 1, createErrorWidget('log', value), {
-            coverGutter: false,
+            coverGutter: false
           }))
         },
         utils
       },
       literals
     )
+    cm.setOption('hintOptions', { hint: codeCompletion(pocketLisp.interpreter) })
 
     const run = async () => {
       editorWidgets.forEach(widget => widget.clear())
@@ -180,7 +189,7 @@
             editorErrors.push(cm.doc.markText(mFrom, mTo, { className: 'syntax-error', title: err.message }))
 
             editorWidgets.push(cm.doc.addLineWidget(err.position.line - 1, createErrorWidget('error', err.message), {
-              coverGutter: false,
+              coverGutter: false
             }))
           }
         }
@@ -209,7 +218,23 @@
     }
     return node
   }
+  const codeCompletion = (interpreter) => {
+    return (cm) => {
+      const cursor = cm.getCursor()
+      const line = cm.getLine(cursor.line)
+      let start = cursor.ch
+      const end = cursor.ch
 
+      while (start && /(\w|_|-)/.test(line.charAt(start - 1))) --start
+      const word = line.slice(start, end).toLowerCase()
+
+      return {
+        list: interpreter.getGlobalNames().filter((name) => name.includes(word)),
+        from: CodeMirror.Pos(cursor.line, start),
+        to: CodeMirror.Pos(cursor.line, end),
+      }
+    }
+  }
   init()
 
 </script>
